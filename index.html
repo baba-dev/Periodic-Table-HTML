@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry By Siddiqui - Periodic Table</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="main">
+        <div id="container" @click='showShare = false' :class='{infoVisible: showInfo == true, shareVisible: showShare == true, overviewVisible: viewElement > -1}'>
+            <h1>Perodic Table</h1>
+            <div class="elements">
+                <div :class='elementClass(element, index)' v-for="(element, index) in elements" @click="showElement(index, $event)" :key="element.id">{{element.symbol}}</div>
+            </div>
+            <div class="legend">
+                <h3>Categories</h3>
+                <div class="categories">
+                    <div v-for="category in categories" @mouseover="showCategory = category.categoryClean" @mouseleave="showCategory = ''">
+                        <span class='color' :class='category.categoryClean'></span>
+                        <span class="caregory">{{category.category}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id='sidebar' :class="{show: viewElement > -1}">
+            <div class='head'>
+
+                <span class="number">{{currentElement.number}}</span>
+                <span class='phase' :style='{"background-image": "url(" + getPhaseIcon +")"}' :title="currentElement.phase"></span>
+                <span class="symbol">{{currentElement.symbol}}</span>
+                <span class="name">{{currentElement.name}}</span>
+                <span class="atomic-mass">{{currentElement.atomic_mass}}</span>
+
+            </div>
+            <div class='body'>
+                <h3>
+                    Overview
+                </h3>
+                <div class="desc">
+                    {{currentElement.summary}}
+                </div>
+                <div class='properties'>
+                    <div class='prop' v-for="prop in overview" v-if='prop.value != null'>
+                        <span class='icon'>{{prop.icon}}</span>
+                        <span class='text'>{{prop.text}}</span>
+                        <span class='value'>{{prop.value}}</span>
+                    </div>
+                </div>
+            </div>
+            <div id='shells'>
+                <div v-for="(shells, index) in currentElement.shells">
+                    <span v-for='(shell, index) in shells' :style='{"transform": "rotate("+ (360 / shells * index) + "deg)"}'></span>
+                </div>
+            </div>
+        </div>
+        <div id="actions" @click="viewElement = -1">
+            <span class="search" @click="searchMode = !searchMode"><i class="ion ion-md-search"></i></span>
+            <span class="info" @click="showInfo = true"><i class="ion ion-md-information-circle"></i></span>
+            <span class="share" @click="showShare = true"><i class="ion ion-md-share"></i></span>
+        </div>
+        <div id="search" :class="{show: searchMode == true}" @click="viewElement = -1">
+            <input type='text' @input="searchElements" ref='searchInput'>
+            <span class='close' @click="searchMode = false">×</span>
+        </div>
+        <div id="info" :class="{show: showInfo == true}">
+            <div class='close' @click='showInfo = false'>×</div>
+            <div class='project'>
+                <h2>Chemistry By Siddiqui</h2>
+                <p>The periodic table, also known as the periodic table of the (chemical) elements, is a tabular display of the chemical elements. It is widely used in chemistry, physics, and other sciences, and is generally seen as an icon of chemistry. It is a graphic formulation of the periodic law, which states that the properties of the chemical elements exhibit a periodic dependence on their atomic numbers.</p>
+            </div>
+
+            <div class='resources'>
+                <h2>Versions of Periodic Table</h2>
+
+                <li><a target="_blank" href='https://en.wikipedia.org/wiki/File:Mendelejevs_periodiska_system_1871.png'>Mendeleev's 1871 Periodic table</a></li>
+                <li><a target="_blank" href='https://en.wikipedia.org/wiki/Extended_periodic_table'>Extension of the periodic table</a></li>
+                <hr />
+                <li><a target="_blank" href='https://en.wikipedia.org/wiki/File:Periodic_table_blocks_spdf_(32_column).svg'>Left-step periodic table (Janet, 1928)</a></li>
+                <li><a target="_blank" href='https://upload.wikimedia.org/wikipedia/commons/e/ec/Harrison_Spiral_Periodic_Table.svg'>Harrison Spiral Periodic Table</a></li>
+                <li><a target="_blank" href='https://upload.wikimedia.org/wikipedia/commons/1/12/The_Ring_Of_Periodic_Elements_%28TROPE%29.png'>TROPE : The Ring of Periodic Elements</a></li>
+                <li><a target="_blank" href='https://en.wikipedia.org/wiki/Alternative_periodic_tables#/media/File:The_chemical_elements_and_their_periodic_relationships.svg'>Curled ribbon periodic table (J. F. Hyde)</a></li>
+                <hr />
+
+                <li><a target="_blank" href='https://en.wikipedia.org/wiki/Periodic_table'>Wikipedia : Periodic Table</a></li>
+
+
+            </div>
+            <div class='other-projects'>
+                <h2>Other Models</h2>
+
+                <li><a target="_blank" href='#'>Chemical Genearator</a></li>
+                <li><a target="_blank" href='#'>Electron Model</a></li>
+                <li><a target="_blank" href='#'>Elements</a></li>
+                <li><a target="_blank" href='#'>Gas Genearator</a></li>
+                <li><a target="_blank" href='#'>Chemistry Playground</a></li>
+                <hr />
+
+                <li><a target="_blank" href='https://babahumor.com'>Parent Site</a></li>
+
+
+            </div>
+        </div>
+        <social-networks :show='showShare' @close='showShare = false'></social-networks>
+    </div>
+
+    <template id='social-networks'>
+        <div id='share-container' :class='{show: show == true}'>
+            <div v-for='(network, index) in networks' :href='network.link' target='_blank' @click="openPopup(network.link)" :style="{'background-color': [network.color]}">
+                <i class="icon" :class="[network.icon]"></i>
+            </div>
+            <div class='close' @click='$emit("close")'>×</div>
+        </div>
+    </template>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
